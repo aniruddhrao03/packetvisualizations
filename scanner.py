@@ -1,31 +1,75 @@
+import tkinter as tk
+from tkinter import ttk
 import socket
+from threading import Thread
 
-def scan_port(target_host, target_port):
-    try:
-        # Create a socket object
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # Set timeout for connection attempt
-        sock.settimeout(1)
-        # Attempt to connect to target host and port
-        result = sock.connect_ex((target_host, target_port))
-        if result == 0:
-            print(f"Port {target_port} is open")
-        else:
-            print(f"Port {target_port} is closed")
-        # Close the socket connection
-        sock.close()
-    except socket.error:
-        print("Couldn't connect to server")
+class PortScannerApp:
+    def __init__(self, master):
+        self.master = master
+        master.title("Port Scanner")
 
-def port_scan(target_host, port_range):
-    # Split port range into start and end ports
-    start_port, end_port = port_range.split('-')
-    start_port = int(start_port)
-    end_port = int(end_port)
-    for port in range(start_port, end_port + 1):
-        scan_port(target_host, port)
+        self.label_host = ttk.Label(master, text="Target Host:")
+        self.label_host.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.entry_host = ttk.Entry(master, width=30)
+        self.entry_host.grid(row=0, column=1, padx=10, pady=5)
+
+        self.label_ports = ttk.Label(master, text="Port Range:")
+        self.label_ports.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.entry_ports = ttk.Entry(master, width=30)
+        self.entry_ports.grid(row=1, column=1, padx=10, pady=5)
+
+        self.button_scan = ttk.Button(master, text="Scan Ports", command=self.start_scan)
+        self.button_scan.grid(row=2, columnspan=2, padx=10, pady=10)
+
+        self.text_output = tk.Text(master, height=10, width=50)
+        self.text_output.grid(row=3, columnspan=2, padx=10, pady=5)
+
+    def validate_port_range(self, port_range):
+        try:
+            start_port, end_port = map(int, port_range.split('-'))
+            if start_port < 1 or start_port > 65535 or end_port < 1 or end_port > 65535 or start_port > end_port:
+                return False
+            return True
+        except ValueError:
+            return False
+
+    def scan_port(self, target_host, target_port):
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(1)
+            result = sock.connect_ex((target_host, target_port))
+            if result == 0:
+                self.text_output.insert(tk.END, f"Port {target_port} is open\n")
+            else:
+                self.text_output.insert(tk.END, f"Port {target_port} is closed\n")
+            sock.close()
+        except socket.error:
+            self.text_output.insert(tk.END, "Couldn't connect to server\n")
+
+    def port_scan(self, target_host, port_range):
+        start_port, end_port = map(int, port_range.split('-'))
+        for port in range(start_port, end_port + 1):
+            self.scan_port(target_host, port)
+
+    def start_scan(self):
+        target_host = self.entry_host.get()
+        port_range = self.entry_ports.get()
+
+        self.text_output.delete(1.0, tk.END)  # Clear previous output
+
+        if not self.validate_port_range(port_range):
+            self.text_output.insert(tk.END, "Invalid port range. Please enter a valid range (e.g., 1-65535).\n")
+            return
+
+        self.text_output.insert(tk.END, f"Scanning {target_host}...\n")
+
+        scan_thread = Thread(target=self.port_scan, args=(target_host, port_range))
+        scan_thread.start()
+
+def main():
+    root = tk.Tk()
+    app = PortScannerApp(root)
+    root.mainloop()
 
 if __name__ == "__main__":
-    target_host = input("Enter target host: ")
-    port_range = input("Enter port range (e.g., 1-100): ")
-    port_scan(target_host, port_range)
+    main()

@@ -4,49 +4,60 @@ body {
     color: #56ff00;
     margin: 0;
     padding: 20px;
+    transition: background-color 0.3s ease-in-out;
 }
 
 h1 {
     color: #ff00ff;
     text-align: center;
+    font-size: 24px; /* Increased size for prominence */
+    margin-bottom: 20px; /* Added space below the title */
+    text-shadow: 1px 1px 2px #000; /* Subtle text shadow for depth */
 }
 
 .container {
-    max-width: 400px;
+    max-width: 600px; /* Increased width for better layout */
     margin: 0 auto;
+    padding: 20px; /* Padding for spacing around content */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    border-radius: 10px; /* Rounded corners for elegance */
+    background: rgba(0, 0, 0, 0.3); /* Slight transparency */
 }
 
 input[type="text"], input[type="number"], button {
     width: 100%;
-    padding: 10px;
+    padding: 15px; /* More padding for better interaction area */
     margin: 10px 0;
     box-sizing: border-box;
     border: none;
-    border-radius: 5px;
-    background-color: #121212;
+    border-radius: 8px; /* Smoother rounded corners */
+    background-color: #1e1e1e; /* Slightly lighter than body for contrast */
     color: #56ff00;
-    font-size: 16px;
+    font-size: 18px; /* Larger font for readability */
     font-weight: bold;
     outline: none;
+    transition: transform 0.3s ease; /* Smooth transition for interaction */
 }
 
 button {
     background-color: #ff00ff;
-    color: #000000;
+    color: #ffffff;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s ease;
 }
 
 button:hover {
     background-color: #ff77ff;
+    transform: scale(1.05); /* Slight scale to indicate interactivity */
 }
 
 #output {
     background-color: #000000;
     color: #56ff00;
-    padding: 10px;
+    padding: 15px;
     margin-top: 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     overflow-wrap: break-word;
-    font-size: 14px;
+    font-size: 16px; /* Increased font size for readability */
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Green glow for emphasis */
 }
